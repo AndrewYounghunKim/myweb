@@ -261,6 +261,22 @@
   }
   .what p { margin: 0; font-size: 0.95rem; color: var(--ink-2); line-height: 1.5; }
   .what p .adv { color: var(--ink-3); }
+  .what h3 a {
+    color: inherit; text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    transition: color 140ms ease, border-color 140ms ease;
+  }
+  .what h3 a:hover { color: var(--accent); border-bottom-color: currentColor; }
+  .what h3 a::after {
+    content: "\2197"; font-family: var(--f-mono); font-size: 0.72em;
+    color: var(--brass); margin-left: 0.3em; vertical-align: 0.08em;
+  }
+  .what p a {
+    color: var(--ink-2); text-decoration: none;
+    font-family: var(--f-mono); font-size: 0.9em;
+    border-bottom: 1px solid var(--rule);
+  }
+  .what p a:hover { color: var(--brass); border-bottom-color: currentColor; }
 
   /* ── skills ──────────────────────────────────────────────── */
   .skills { display: grid; gap: 1.35rem; }
@@ -321,6 +337,7 @@
     <ol>
       <li><a href="#about">About</a></li>
       <li><a href="#publications">Publications</a></li>
+      <li><a href="#news">News</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#awards">Awards</a></li>
       <li><a href="#skills">Toolbox</a></li>
@@ -390,6 +407,27 @@
           <span class="pubvenue">ACS Applied Materials &amp; Interfaces</span>
         </li>
       </ol>
+    </section>
+
+    <section id="news">
+      <p class="eyebrow">In the News</p>
+      <h2 class="title">Press coverage</h2>
+      <div class="dated">
+        <div class="row">
+          <div class="when">Aug 2026</div>
+          <div class="what">
+            <h3><a href="https://news.kaist.ac.kr/newsen/html/news/?mode=V&amp;mng_no=65610" target="_blank" rel="noopener noreferrer">KAIST Templates a &ldquo;Gas Lattice&rdquo; in Porous Materials</a></h3>
+            <p>KAIST News <span class="adv">&middot; on <a href="#publications">[1]</a>, Nature Communications</span></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="when">Sep 2025</div>
+          <div class="what">
+            <h3><a href="https://news.kaist.ac.kr/newsen/html/news/?mode=V&amp;mng_no=51730" target="_blank" rel="noopener noreferrer">World&rsquo;s First Quantum Computing for Lego-like Design of Porous Materials</a></h3>
+            <p>KAIST News <span class="adv">&middot; on <a href="#publications">[5]</a>, ACS Central Science</span></p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="education">

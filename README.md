@@ -33,7 +33,9 @@ main / (root) → Save**.
 - **New publication** — copy an existing `<li>` inside the matching
   `<ol class="pubs">` and bump the `[n]` in `.pubnum`. A new year gets its own
   `<p class="pubyear">` heading above a fresh `<ol class="pubs">`.
-- **New award or degree** — copy a `.row` block inside `.dated`.
+- **New award, degree, or news item** — copy a `.row` block inside the relevant
+  `.dated`. In the News section the headline is a link, which is what gives it the
+  ↗ marker; leave the `target="_blank" rel="noopener noreferrer"` attributes on it.
 - **New tool** — add a `<span>` inside the relevant `.chips`.
 - **Colors and fonts** — all of it lives in the `:root` custom properties at the
   top of the `<style>` block, with matching light/dark values. Change a token
