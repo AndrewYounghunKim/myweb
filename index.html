@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Younghun Kim - Ph.D. candidate in Chemical &amp; Biomolecular Engineering at KAIST. Metal-organic frameworks, molecular simulation, and machine learning for materials design.">
+<meta name="author" content="Younghun Kim">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%230E4F4A%27/%3E%3Ccircle cx=%278%27 cy=%278%27 r=%272.6%27 fill=%27%23F2F3F0%27/%3E%3Ccircle cx=%2724%27 cy=%278%27 r=%272.6%27 fill=%27%23F2F3F0%27/%3E%3Ccircle cx=%278%27 cy=%2724%27 r=%272.6%27 fill=%27%23F2F3F0%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%272.6%27 fill=%27%23F2F3F0%27/%3E%3Cpath d=%27M8 8h16M8 24h16M8 8v16M24 8v16%27 stroke=%27%23D6A84E%27 stroke-width=%271.4%27/%3E%3C/svg%3E">
+<title>Younghun Kim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+  :root {
+    --bg:        #F2F3F0;
+    --surface:   #FBFBF9;
+    --surface-2: #E9ECE7;
+    --ink:       #14201E;
+    --ink-2:     #4E5B58;
+    --ink-3:     #78857F;
+    --rule:      #D5DAD4;
+    --accent:    #0E4F4A;
+    --accent-lo: #0E4F4A1A;
+    --brass:     #96681F;
+    --lattice:   #0E4F4A;
+    --lattice-a: 0.10;
+
+    --f-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --f-body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono:    "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+    --measure: 66ch;
+    --pad:     clamp(1.25rem, 4vw, 3rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:        #0D1413;
+      --surface:   #141D1B;
+      --surface-2: #1B2624;
+      --ink:       #E7ECE9;
+      --ink-2:     #A2B0AB;
+      --ink-3:     #7A8884;
+      --rule:      #263230;
+      --accent:    #74C3B7;
+      --accent-lo: #74C3B722;
+      --brass:     #D6A84E;
+      --lattice:   #74C3B7;
+      --lattice-a: 0.13;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:        #0D1413;
+    --surface:   #141D1B;
+    --surface-2: #1B2624;
+    --ink:       #E7ECE9;
+    --ink-2:     #A2B0AB;
+    --ink-3:     #7A8884;
+    --rule:      #263230;
+    --accent:    #74C3B7;
+    --accent-lo: #74C3B722;
+    --brass:     #D6A84E;
+    --lattice:   #74C3B7;
+    --lattice-a: 0.13;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: clamp(1rem, 0.97rem + 0.15vw, 1.075rem);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2.5px; }
+  a:hover { color: var(--brass); }
+  :focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 2px; }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding-inline: var(--pad); }
+
+  /* ── masthead ────────────────────────────────────────────── */
+  .masthead { position: relative; border-bottom: 1px solid var(--rule); overflow: hidden; }
+  #lattice {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: block; pointer-events: none;
+  }
+  .masthead .wrap {
+    position: relative;
+    display: flex; align-items: flex-end; gap: clamp(1.5rem, 4vw, 2.75rem);
+    padding-block: clamp(2.25rem, 6vw, 3.75rem) clamp(1.75rem, 4vw, 2.5rem);
+    flex-wrap: wrap;
+  }
+
+  .portrait {
+    flex: 0 0 auto; width: clamp(112px, 16vw, 156px);
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 5px;
+  }
+  .portrait img { display: block; width: 100%; height: auto; filter: saturate(0.94); }
+
+  .ident { flex: 1 1 22rem; min-width: 0; }
+  .ident h1 {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(2.4rem, 1.35rem + 4.6vw, 4.25rem);
+    line-height: 0.95;
+    letter-spacing: -0.028em;
+    margin: 0 0 0.55rem;
+    text-wrap: balance;
+  }
+  .ident h1 .given { color: var(--ink); }
+  .ident h1 .family { color: var(--accent); }
+  .role {
+    font-family: var(--f-display); font-weight: 500;
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.2rem);
+    line-height: 1.35; color: var(--ink-2); margin: 0 0 0.2rem;
+  }
+  .affil { font-size: 0.95rem; color: var(--ink-3); margin: 0; }
+
+  .contact {
+    display: flex; flex-wrap: wrap; gap: 0.4rem 1.35rem;
+    margin-top: 1.15rem;
+    font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: 0.01em;
+  }
+  .contact a { text-decoration: none; border-bottom: 1px solid var(--accent-lo); padding-bottom: 1px; }
+  .contact a:hover { border-bottom-color: currentColor; }
+  .contact .cv {
+    color: var(--bg); background: var(--accent);
+    border: 1px solid var(--accent); border-bottom-color: var(--accent);
+    padding: 0.34rem 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase; font-size: 0.72rem;
+  }
+  .contact .cv:hover { background: var(--brass); border-color: var(--brass); color: var(--bg); }
+
+  /* ── two-column body ─────────────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-block: clamp(2rem, 5vw, 3.5rem) 0;
+  }
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: 12.5rem minmax(0, 1fr);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+
+  nav.rail { align-self: start; }
+  @media (min-width: 900px) { nav.rail { position: sticky; top: 2.75rem; } }
+  nav.rail ol {
+    list-style: none; margin: 0 0 2.25rem; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 0.15rem 1.1rem;
+    font-family: var(--f-mono); font-size: 0.735rem;
+    text-transform: uppercase; letter-spacing: 0.075em;
+  }
+  @media (min-width: 900px) {
+    nav.rail ol { flex-direction: column; gap: 0.05rem; margin-bottom: 0; }
+  }
+  nav.rail a {
+    display: block; text-decoration: none; color: var(--ink-3);
+    padding: 0.3rem 0 0.3rem 0.85rem;
+    border-left: 2px solid transparent;
+    transition: color 140ms ease, border-color 140ms ease;
+  }
+  @media (max-width: 899px) { nav.rail a { padding-left: 0; border-left: 0; } }
+  nav.rail a:hover { color: var(--ink); }
+  nav.rail a[aria-current="true"] { color: var(--accent); border-left-color: var(--brass); }
+  @media (max-width: 899px) {
+    nav.rail a[aria-current="true"] { border-bottom: 2px solid var(--brass); }
+  }
+
+  main { min-width: 0; padding-bottom: 4rem; }
+
+  section { padding-block: clamp(1.75rem, 4vw, 2.75rem); border-top: 1px solid var(--rule); }
+  section:first-child { border-top: 0; padding-top: 0; }
+
+  .eyebrow {
+    font-family: var(--f-mono); font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--brass); margin: 0 0 0.9rem;
+    display: flex; align-items: baseline; gap: 0.6rem;
+  }
+  .eyebrow::after {
+    content: ""; flex: 1 1 auto; height: 1px; background: var(--rule);
+    transform: translateY(-0.28em);
+  }
+
+  h2.title {
+    font-family: var(--f-display); font-weight: 700;
+    font-size: clamp(1.45rem, 1.25rem + 0.8vw, 1.9rem);
+    line-height: 1.12; letter-spacing: -0.018em;
+    margin: 0 0 1.15rem; text-wrap: balance;
+  }
+
+  .lede { max-width: var(--measure); margin: 0 0 1rem; }
+  .lede:last-child { margin-bottom: 0; }
+  .lede strong { font-weight: 600; color: var(--ink); }
+
+  /* ── publications ────────────────────────────────────────── */
+  .pubyear {
+    font-family: var(--f-mono); font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.1em; color: var(--ink-3);
+    margin: 1.9rem 0 0.85rem;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .pubyear:first-of-type { margin-top: 0; }
+  .pubyear::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+
+  ol.pubs { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.1rem; }
+  ol.pubs li {
+    display: grid; grid-template-columns: 2.1rem minmax(0, 1fr); gap: 0.15rem 0.5rem;
+  }
+  .pubnum {
+    font-family: var(--f-mono); font-size: 0.8rem; font-weight: 500;
+    color: var(--brass); font-variant-numeric: tabular-nums;
+    padding-top: 0.16rem;
+  }
+  .pubtitle { font-weight: 600; line-height: 1.42; }
+  .pubauthors {
+    grid-column: 2; font-family: var(--f-mono); font-size: 0.755rem;
+    color: var(--ink-3); line-height: 1.55; margin-top: 0.22rem;
+  }
+  .pubauthors .me { color: var(--ink); font-weight: 600; }
+  .pubvenue {
+    grid-column: 2; margin-top: 0.2rem;
+    font-size: 0.92rem; font-style: italic; color: var(--accent);
+  }
+  .pubvenue .note {
+    font-style: normal; font-family: var(--f-mono); font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--brass); margin-left: 0.55rem;
+    border: 1px solid var(--rule); padding: 0.1rem 0.35rem;
+    white-space: nowrap;
+  }
+
+  /* ── dated lists (education / awards) ────────────────────── */
+  .dated { display: grid; gap: 1.3rem; }
+  .dated .row {
+    display: grid; gap: 0.1rem 1.1rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 560px) {
+    .dated .row { grid-template-columns: 9.5rem minmax(0, 1fr); }
+  }
+  .when {
+    font-family: var(--f-mono); font-size: 0.75rem; color: var(--ink-3);
+    letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
+    padding-top: 0.28rem;
+  }
+  .what h3 {
+    font-family: var(--f-display); font-weight: 700; font-size: 1.02rem;
+    margin: 0 0 0.15rem; letter-spacing: -0.008em; line-height: 1.3;
+  }
+  .what p { margin: 0; font-size: 0.95rem; color: var(--ink-2); line-height: 1.5; }
+  .what p .adv { color: var(--ink-3); }
+
+  /* ── skills ──────────────────────────────────────────────── */
+  .skills { display: grid; gap: 1.35rem; }
+  .skillgroup h3 {
+    font-family: var(--f-mono); font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.11em;
+    color: var(--ink-3); margin: 0 0 0.6rem;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .chips span {
+    font-family: var(--f-mono); font-size: 0.755rem;
+    padding: 0.3rem 0.6rem;
+    background: var(--surface-2); color: var(--ink-2);
+    border: 1px solid var(--rule);
+  }
+
+  /* ── footer ──────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  footer .wrap {
+    display: flex; flex-wrap: wrap; gap: 0.6rem 1.5rem;
+    align-items: baseline; justify-content: space-between;
+    padding-block: 1.6rem 1.8rem;
+    font-family: var(--f-mono); font-size: 0.735rem; color: var(--ink-3);
+  }
+  footer a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  footer a:hover { color: var(--brass); border-bottom-color: currentColor; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <canvas id="lattice" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="portrait">
+      <img src="Profile.JPG" width="378" height="496" alt="Portrait of Younghun Kim">
+    </div>
+    <div class="ident">
+      <h1><span class="given">Younghun</span> <span class="family">Kim</span></h1>
+      <p class="role">Ph.D. Candidate, Chemical &amp; Biomolecular Engineering</p>
+      <p class="affil">Korea Advanced Institute of Science and Technology (KAIST) &middot; Daejeon, Korea</p>
+      <div class="contact">
+        <a class="cv" href="CV.pdf">Curriculum Vitae (PDF)</a>
+        <a href="mailto:andy1220@kaist.ac.kr">andy1220@kaist.ac.kr</a>
+        <span>Advisor: Prof. Jihan Kim</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="rail" aria-label="Sections">
+    <ol>
+      <li><a href="#about">About</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#awards">Awards</a></li>
+      <li><a href="#skills">Toolbox</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section id="about">
+      <p class="eyebrow">About</p>
+      <p class="lede">
+        I am a Ph.D. candidate in Chemical and Biomolecular Engineering at KAIST, advised by
+        Prof. Jihan Kim. I work at the interface of machine learning, molecular simulation, and
+        materials chemistry to accelerate real-world materials discovery.
+      </p>
+      <p class="lede">
+        My research spans porous materials such as metal&ndash;organic frameworks (MOFs), as well as
+        gas separation membranes, catalysis, and lithium metal batteries, much of it in close
+        collaboration with experimental groups. I also work on inverse materials design and
+        LLM agents for autonomous discovery.
+      </p>
+    </section>
+
+    <section id="publications">
+      <p class="eyebrow">Publications</p>
+      <h2 class="title">Peer-reviewed work</h2>
+
+      <p class="pubyear">2026</p>
+      <ol class="pubs">
+        <li>
+          <span class="pubnum">[1]</span>
+          <span class="pubtitle">Framework-Templated Gas Lattices in Metal-Organic Frameworks</span>
+          <span class="pubauthors"><span class="me">Y. Kim</span>, D. Kim, S. Kim, Y. Lim, J. Kim*</span>
+          <span class="pubvenue">Nature Communications<span class="note">Co-first author</span></span>
+        </li>
+        <li>
+          <span class="pubnum">[2]</span>
+          <span class="pubtitle">Large Language Models for Porous Materials: From Text Mining to Autonomous Laboratory</span>
+          <span class="pubauthors">S. Han, T. Bae, J. Kim, <span class="me">Y. Kim</span>, J. Kim*</span>
+          <span class="pubvenue">Digital Discovery</span>
+        </li>
+        <li>
+          <span class="pubnum">[3]</span>
+          <span class="pubtitle">LLMB: AI agent for lithium metal battery research using large language model</span>
+          <span class="pubauthors">J. Lee, J. Woo, <span class="me">Y. Kim</span>, S. Kim, C. Paulina, H. Park, H. T. Kim*, S. Park*, J. Kim*</span>
+          <span class="pubvenue">ACS Central Science</span>
+        </li>
+      </ol>
+
+      <p class="pubyear">2025</p>
+      <ol class="pubs">
+        <li>
+          <span class="pubnum">[4]</span>
+          <span class="pubtitle">Nitrogen-enriched porous organic polymers for high-performance CO<sub>2</sub>/N<sub>2</sub> separation in mixed-matrix membranes</span>
+          <span class="pubauthors">Y. Jeong, <span class="me">Y. Kim</span>, W. S. Jeong, H. Choi, J. Kim*, T. Bae*</span>
+          <span class="pubvenue">Journal of Membrane Science</span>
+        </li>
+        <li>
+          <span class="pubnum">[5]</span>
+          <span class="pubtitle">Quantum Computing-Based Design of Multivariate Porous Materials</span>
+          <span class="pubauthors">S. Kang, <span class="me">Y. Kim</span>, J. Kim*</span>
+          <span class="pubvenue">ACS Central Science<span class="note">Co-first author</span></span>
+        </li>
+        <li>
+          <span class="pubnum">[6]</span>
+          <span class="pubtitle">Amorphous Metal-Organic Framework Database for Amorphization Prediction and CO<sub>2</sub> Direct Air Capture Screening</span>
+          <span class="pubauthors"><span class="me">Y. Kim</span>, W. Lee, J. Kim*</span>
+          <span class="pubvenue">ACS Applied Materials &amp; Interfaces</span>
+        </li>
+      </ol>
+    </section>
+
+    <section id="education">
+      <p class="eyebrow">Education</p>
+      <h2 class="title">Training</h2>
+      <div class="dated">
+        <div class="row">
+          <div class="when">Sep 2023 &ndash; Aug 2027<br>(expected)</div>
+          <div class="what">
+            <h3>Ph.D. Candidate, Chemical &amp; Biomolecular Engineering</h3>
+            <p>KAIST, Daejeon, Korea &middot; <span class="adv">Advisor: Jihan Kim</span></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="when">Sep 2021 &ndash; Aug 2023</div>
+          <div class="what">
+            <h3>M.S., Chemical &amp; Biomolecular Engineering</h3>
+            <p>KAIST, Daejeon, Korea &middot; <span class="adv">Advisor: Jihan Kim</span></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="when">Sep 2015 &ndash; Aug 2021</div>
+          <div class="what">
+            <h3>B.S., Chemical Engineering</h3>
+            <p>Case Western Reserve University, Cleveland, OH, USA</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="awards">
+      <p class="eyebrow">Awards &amp; Honors</p>
+      <h2 class="title">Recognition</h2>
+      <div class="dated">
+        <div class="row">
+          <div class="when">Apr 2026</div>
+          <div class="what">
+            <h3>Best Oral Presentation Award</h3>
+            <p>Korean Institute of Chemical Engineers (KIChE), Spring Meeting</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="when">May 2020</div>
+          <div class="what">
+            <h3>Dean&rsquo;s High Honors</h3>
+            <p>Case Western Reserve University &middot; <span class="adv">term honor</span></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="when">Dec 2019</div>
+          <div class="what">
+            <h3>Dean&rsquo;s High Honors</h3>
+            <p>Case Western Reserve University &middot; <span class="adv">term honor</span></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="when">Dec 2018</div>
+          <div class="what">
+            <h3>Dean&rsquo;s Honor List</h3>
+            <p>Case Western Reserve University &middot; <span class="adv">term honor</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <p class="eyebrow">Toolbox</p>
+      <h2 class="title">Technical skills</h2>
+      <div class="skills">
+        <div class="skillgroup">
+          <h3>Programming &amp; Data Science</h3>
+          <div class="chips">
+            <span>Python</span><span>PyTorch</span><span>Scikit-learn</span><span>Pandas</span>
+            <span>Matplotlib</span><span>RDKit</span><span>Shell script</span>
+          </div>
+        </div>
+        <div class="skillgroup">
+          <h3>Molecular Simulation</h3>
+          <div class="chips">
+            <span>VASP</span><span>RASPA</span><span>LAMMPS</span><span>Gaussian</span>
+            <span>ASE</span><span>Pymatgen</span><span>MLIP</span>
+          </div>
+        </div>
+        <div class="skillgroup">
+          <h3>Quantum Computing &amp; Generative AI</h3>
+          <div class="chips">
+            <span>IBM Qiskit</span><span>LLM agents</span><span>Data mining</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Younghun Kim &middot; KAIST, Dept. of Chemical &amp; Biomolecular Engineering</span>
+    <span><a href="mailto:andy1220@kaist.ac.kr">andy1220@kaist.ac.kr</a></span>
+  </div>
+</footer>
+
+<script>
+  /* Ambient framework motif: nodes and linkers on a skewed periodic lattice,
+     the flat projection of a MOF unit cell repeated across the masthead. */
+  (function () {
+    var canvas = document.getElementById('lattice');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    function read(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function draw() {
+      var host = canvas.parentElement;
+      var w = host.clientWidth, h = host.clientHeight;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+
+      var color = read('--lattice') || '#0E4F4A';
+      var alpha = parseFloat(read('--lattice-a')) || 0.1;
+      var cell = 58;              // lattice constant, px
+      var shear = 0.42;           // second basis vector tilt
+      var node = 2.6;             // metal-node radius
+
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 1;
+
+      var cols = Math.ceil(w / cell) + 3;
+      var rows = Math.ceil(h / cell) + 3;
+
+      for (var j = -1; j < rows; j++) {
+        for (var i = -2; i < cols; i++) {
+          var x = i * cell + j * cell * shear;
+          var y = j * cell;
+          if (x < -cell * 2 || x > w + cell) continue;
+
+          // linkers along both basis vectors
+          ctx.beginPath();
+          ctx.moveTo(x + node, y);
+          ctx.lineTo(x + cell - node, y);
+          ctx.moveTo(x + cell * shear * 0.14, y + node);
+          ctx.lineTo(x + cell * shear - cell * shear * 0.14, y + cell - node);
+          ctx.stroke();
+
+          // metal node
+          ctx.beginPath();
+          ctx.arc(x, y, node, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+
+      // fade the motif out toward the bottom so type stays clean
+      var grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(1, 'rgba(0,0,0,1)');
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    draw();
+
+    var t;
+    window.addEventListener('resize', function () {
+      clearTimeout(t);
+      t = setTimeout(draw, 120);
+    });
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq.addEventListener) mq.addEventListener('change', draw);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+  })();
+
+  /* Rail nav follows the section in view. */
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.rail a'));
+    if (!links.length || !window.IntersectionObserver) return;
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var a = map[e.target.id];
+        if (!a) return;
+        if (e.isIntersecting) {
+          links.forEach(function (l) { l.removeAttribute('aria-current'); });
+          a.setAttribute('aria-current', 'true');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  })();
+</script>
+</body>
+</html>
